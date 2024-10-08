@@ -1,42 +1,34 @@
 const { v4: uuidv4 } = require("uuid");
+const db = require("../firebase/fireBaseConfig");
 
-let projects = [
-  {
-    id: uuidv4(),
-    name: "Proyecto A",
-    description: "Este es el proyecto A",
-    startDate: "2024-01-01",
-    endDate: "2024-06-01",
-    status: "pendiente",
-    budget: 10000,
-  },
-  {
-    id: uuidv4(),
-    name: "Proyecto B",
-    description: "Este es el proyecto B",
-    startDate: "2024-03-01",
-    endDate: "2024-09-01",
-    status: "en progreso",
-    budget: 25000,
-  },
-];
+async function getAllProjects() {
+  const projectsRef = db.collection('projects');
+  const snapshot = await projectsRef.get();
 
-function getAllProjects() {
+  if (snapshot.empty) {
+    return [];
+  }
+
+  const projects = [];
+  snapshot.forEach(doc => {
+    projects.push({ id: doc.id, ...doc.data() });
+  });
+
   return projects;
 }
 
-function createProject(data) {
-    const newProject = {
-      id: uuidv4(),
-      name: data.name,
-      description: data.description,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      status: data.status,
-      budget: data.budget
-    };
-    projects.push(newProject);
-    return newProject;
+async function createProject(data) {
+  const newProject = {
+    name: data.name,
+    description: data.description,
+    startDate: data.startDate,
+    endDate: data.endDate,
+    status: data.status,
+    budget: data.budget
+  };
+  
+  const projectRef = await db.collection('projects').add(newProject);
+  return { id: projectRef.id, ...newProject };
 }
 
 module.exports = {
