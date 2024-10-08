@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const JWT_SECRET = "claveSecreta";
-const JWT_EXPIRES_IN = "30s";
+const JWT_EXPIRES_IN = "60s";
 
 async function login(req, res) {
   const { username, password } = req.body;
